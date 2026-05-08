@@ -46,6 +46,10 @@ export const useAddDishMutation = (userId: string) => {
       let photoUrl: string | null = null;
       if (payload.localPhotoUri) {
         photoUrl = await uploadDishPhoto(userId, payload.localPhotoUri);
+        if (!photoUrl) {
+          // Fallback: conserva la foto local si falla el upload remoto (ej. RLS en Storage)
+          photoUrl = payload.localPhotoUri;
+        }
       }
 
       // Construir el objeto Dish completo

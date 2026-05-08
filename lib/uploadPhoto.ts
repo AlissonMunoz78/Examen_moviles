@@ -51,7 +51,12 @@ export const uploadDishPhoto = async (
       });
 
     if (error) {
-      console.error("[Storage] Error subiendo foto:", error.message);
+      const isRlsError = error.message.toLowerCase().includes("row-level security");
+      if (isRlsError) {
+        console.warn("[Storage] Upload bloqueado por RLS en bucket dish-photos. Se usara foto local.");
+      } else {
+        console.warn("[Storage] No se pudo subir foto:", error.message);
+      }
       return null;
     }
 
@@ -59,7 +64,7 @@ export const uploadDishPhoto = async (
     const { data } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
     return data.publicUrl;
   } catch (error) {
-    console.error("[Storage] Error inesperado al subir foto:", error);
+    console.warn("[Storage] Error inesperado al subir foto:", error);
     return null;
   }
 };

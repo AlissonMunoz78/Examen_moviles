@@ -4,47 +4,61 @@
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient } from "@supabase/supabase-js";
-import * as SecureStore from "expo-secure-store";
-import { Platform } from "react-native";
 
 // Credenciales leídas desde .env (NUNCA hardcodeadas — Requerimiento de entrega)
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+// Validar que las credenciales existan
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error(
+    "[Supabase] Variables de entorno no configuradas:",
+    "EXPO_PUBLIC_SUPABASE_URL:",
+    supabaseUrl ? "✓" : "✗",
+    "EXPO_PUBLIC_SUPABASE_ANON_KEY:",
+    supabaseAnonKey ? "✓" : "✗"
+  );
+}
 
 /**
- * Adaptador de almacenamiento seguro para Supabase.
- * En Android/iOS usa SecureStore (encriptado).
- * En Web cae a AsyncStorage como fallback.
+ * Supabase Auth puede exceder 2KB por sesión.
+ * Usamos AsyncStorage para evitar warnings/errores por límite de SecureStore.
  */
-const ExpoSecureStoreAdapter = {
+const SupabaseStorageAdapter = {
   getItem: async (key: string): Promise<string | null> => {
-    if (Platform.OS === "web") {
+    try {
       return AsyncStorage.getItem(key);
+    } catch (error) {
+      console.error("[AuthStorage] Error leyendo item:", error);
+      return null;
     }
-    return SecureStore.getItemAsync(key);
   },
   setItem: async (key: string, value: string): Promise<void> => {
-    if (Platform.OS === "web") {
+    try {
       await AsyncStorage.setItem(key, value);
-      return;
+    } catch (error) {
+      console.error("[AuthStorage] Error guardando item:", error);
     }
-    await SecureStore.setItemAsync(key, value);
   },
   removeItem: async (key: string): Promise<void> => {
-    if (Platform.OS === "web") {
+    try {
       await AsyncStorage.removeItem(key);
-      return;
+    } catch (error) {
+      console.error("[AuthStorage] Error eliminando item:", error);
     }
-    await SecureStore.deleteItemAsync(key);
   },
 };
 
 // Cliente Supabase singleton — usado en toda la app
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    storage: ExpoSecureStoreAdapter,
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: false, // No aplicable en React Native
-  },
-});
+export const supabase = createClient(
+  supabaseUrl || "https://placeholder.supabase.co",
+  supabaseAnonKey || "placeholder-key",
+  {
+    auth: {
+      storage: SupabaseStorageAdapter,
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false, // No aplicable en React Native
+    },
+  }
+);

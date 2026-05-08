@@ -8,6 +8,7 @@ import { Slot, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider, useAuth } from "../context/AuthContext";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 import { queryClient } from "../lib/queryClient";
 
 /**
@@ -43,19 +44,21 @@ function NavigationGuard() {
 
 /**
  * Layout raíz de la aplicación.
- * Provee: GestureHandler (swipe), TanStack Query, AuthContext, Expo Router.
+ * Provee: ErrorBoundary, GestureHandler (swipe), TanStack Query, AuthContext, Expo Router.
  */
 export default function RootLayout() {
   return (
-    // GestureHandlerRootView requerido por react-native-gesture-handler para swipe
-    <GestureHandlerRootView className="flex-1">
-      {/* QueryClientProvider: habilita TanStack Query en toda la app */}
-      <QueryClientProvider client={queryClient}>
-        {/* AuthProvider: provee estado de sesión Supabase globalmente */}
-        <AuthProvider>
-          <NavigationGuard />
-        </AuthProvider>
-      </QueryClientProvider>
-    </GestureHandlerRootView>
+    <ErrorBoundary>
+      {/* GestureHandlerRootView requerido por react-native-gesture-handler para swipe */}
+      <GestureHandlerRootView className="flex-1">
+        {/* QueryClientProvider: habilita TanStack Query en toda la app */}
+        <QueryClientProvider client={queryClient}>
+          {/* AuthProvider: provee estado de sesión Supabase globalmente */}
+          <AuthProvider>
+            <NavigationGuard />
+          </AuthProvider>
+        </QueryClientProvider>
+      </GestureHandlerRootView>
+    </ErrorBoundary>
   );
 }

@@ -55,3 +55,51 @@ CREATE POLICY "Usuarios pueden eliminar sus propios platos"
 -- Storage > New Bucket > Nombre: "dish-photos" > Public: ON
 -- Ver README.md para instrucciones paso a paso.
 -- ============================================================
+
+-- ============================================================
+-- STORAGE POLICIES: bucket dish-photos
+-- Evita error: "new row violates row-level security policy"
+-- ============================================================
+
+-- Asegura que RLS este habilitado en storage.objects
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+
+-- Lectura publica de imagenes del bucket
+CREATE POLICY "Public read dish photos"
+  ON storage.objects
+  FOR SELECT
+  USING (bucket_id = 'dish-photos');
+
+-- Upload solo para usuarios autenticados y dentro de su carpeta (user_id/...)
+CREATE POLICY "Auth upload own dish photos"
+  ON storage.objects
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    bucket_id = 'dish-photos'
+    AND split_part(name, '/', 1) = auth.uid()::text
+  );
+
+-- Update solo de archivos propios
+CREATE POLICY "Auth update own dish photos"
+  ON storage.objects
+  FOR UPDATE
+  TO authenticated
+  USING (
+    bucket_id = 'dish-photos'
+    AND split_part(name, '/', 1) = auth.uid()::text
+  )
+  WITH CHECK (
+    bucket_id = 'dish-photos'
+    AND split_part(name, '/', 1) = auth.uid()::text
+  );
+
+-- Delete solo de archivos propios
+CREATE POLICY "Auth delete own dish photos"
+  ON storage.objects
+  FOR DELETE
+  TO authenticated
+  USING (
+    bucket_id = 'dish-photos'
+    AND split_part(name, '/', 1) = auth.uid()::text
+  );

@@ -31,23 +31,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Obtener sesión inicial al montar
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    let isMounted = true;
+
+    // Obtener sesión inicial al montar con manejo de errores
+    supabase.auth.getSession()
+      .then(({ data: { session }, error }) => {
+        if (!isMounted) return;
+        
+        if (error) {
+          console.error("[AuthContext] Error obteniendo sesión:", error.message);
+        }
+        
+        setSession(session ?? null);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        console.error("[AuthContext] Error inesperado en getSession:", err);
+        setLoading(false);
+      });
 
     // Suscribirse a cambios de autenticación (login/logout)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        setSession(session);
+        if (!isMounted) return;
+        setSession(session ?? null);
         setUser(session?.user ?? null);
         setLoading(false);
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription?.unsubscribe();
+    };
   }, []);
 
   /**

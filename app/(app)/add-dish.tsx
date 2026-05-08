@@ -97,7 +97,7 @@ export default function AddDishScreen() {
     }
 
     const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.7,
@@ -123,7 +123,7 @@ export default function AddDishScreen() {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.7,
@@ -370,33 +370,32 @@ export default function AddDishScreen() {
             </Animated.View>
 
             {/* Botón de registro con animación withSpring (Requerimiento 4) */}
-            <Animated.View
-              entering={FadeInDown.delay(300).duration(500)}
-              style={animatedButtonStyle}
-            >
-              <Pressable
-                onPress={handleSubmit(onSubmit)}
-                disabled={isSubmitting}
-                className={`rounded-2xl py-4 items-center shadow-md ${
-                  isSubmitting ? "bg-dominos-red-dark" : "bg-dominos-red"
-                }`}
-              >
-                {isSubmitting ? (
-                  <View className="flex-row items-center gap-2">
-                    <ActivityIndicator color="white" size="small" />
-                    <Text className="text-white font-bold text-base ml-2">
-                      Guardando plato...
-                    </Text>
-                  </View>
-                ) : (
-                  <View className="flex-row items-center gap-2">
-                    <Text className="text-white font-bold text-base">
-                      Registrar plato
-                    </Text>
-                    <Text className="text-white text-lg">🚀</Text>
-                  </View>
-                )}
-              </Pressable>
+            <Animated.View entering={FadeInDown.delay(300).duration(500)}>
+              <Animated.View style={animatedButtonStyle}>
+                <Pressable
+                  onPress={handleSubmit(onSubmit)}
+                  disabled={isSubmitting}
+                  className={`rounded-2xl py-4 items-center shadow-md ${
+                    isSubmitting ? "bg-dominos-red-dark" : "bg-dominos-red"
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <View className="flex-row items-center gap-2">
+                      <ActivityIndicator color="white" size="small" />
+                      <Text className="text-white font-bold text-base ml-2">
+                        Guardando plato...
+                      </Text>
+                    </View>
+                  ) : (
+                    <View className="flex-row items-center gap-2">
+                      <Text className="text-white font-bold text-base">
+                        Registrar plato
+                      </Text>
+                      <Text className="text-white text-lg">🚀</Text>
+                    </View>
+                  )}
+                </Pressable>
+              </Animated.View>
             </Animated.View>
 
             <Animated.View
