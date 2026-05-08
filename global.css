@@ -1,0 +1,4 @@
+/* Punto de entrada de NativeWind v4 — requerido para que Tailwind funcione en React Native */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

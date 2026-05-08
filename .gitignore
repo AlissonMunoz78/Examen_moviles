@@ -1,0 +1,33 @@
+# === SEGURIDAD: Credenciales Supabase — NUNCA subir al repo ===
+# Penalización: -10 puntos si se exponen credenciales en el repositorio
+.env
+.env.local
+.env.production
+
+# Expo / React Native
+node_modules/
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# EAS
+.easignore
+
+# iOS
+ios/
+android/
+
+# Misc
+.DS_Store
+*.log
+npm-debug.*
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+.idea/
