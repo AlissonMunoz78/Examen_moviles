@@ -1,11 +1,13 @@
 // app/(app)/_layout.tsx
-// Layout del grupo protegido — solo accesible con sesión activa
-// Contiene navegación por tabs: Home y Agregar Plato
+// Layout principal con tabs
+// Taller 7: Agregada pantalla dish-detail oculta del tab bar
 
 import { Tabs } from "expo-router";
 import { Text, View } from "react-native";
 
-/** Ícono de tab con indicador de activo al estilo Domino's */
+/**
+ * Ícono de tab estilo Domino's
+ */
 function TabIcon({
   emoji,
   focused,
@@ -29,38 +31,63 @@ export default function AppLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
+
         tabBarStyle: {
-          backgroundColor: "#1A1A2E", // dominos-dark
+          backgroundColor: "#1A1A2E",
           borderTopWidth: 0,
           height: 64,
           paddingBottom: 8,
         },
-        tabBarActiveTintColor: "#E31837",   // dominos-red
-        tabBarInactiveTintColor: "#9CA3AF", // dominos-gray-mid
+
+        tabBarActiveTintColor: "#E31837",
+
+        tabBarInactiveTintColor: "#9CA3AF",
+
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: "600",
         },
       }}
     >
+      {/* Pantalla Home */}
       <Tabs.Screen
         name="home"
         options={{
           title: "Mis Platos",
+
           tabBarIcon: ({ focused }) => (
             <TabIcon emoji="🗺️" focused={focused} />
           ),
         }}
       />
+
+      {/* Pantalla Agregar */}
       <Tabs.Screen
         name="add-dish"
         options={{
           title: "Agregar",
+
           tabBarIcon: ({ focused }) => (
             <TabIcon emoji="➕" focused={focused} />
           ),
         }}
       />
+
+      {/* Taller 7: Pantalla detalle del mapa */}
+      <Tabs.Screen
+        name="dish-detail"
+        options={{
+          href: null,
+          title: "Detalle",
+        }}
+      />
+      <Tabs.Screen
+  name="select-location"
+  options={{
+    href: null,
+    title: "Seleccionar ubicación",
+  }}
+/>
     </Tabs>
   );
 }

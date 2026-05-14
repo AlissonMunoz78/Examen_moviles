@@ -3,7 +3,6 @@
     "name": "GastroMap",
     "slug": "gastromap",
     "version": "1.0.0",
-    "newArchEnabled": true,
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -66,15 +65,16 @@
     "updates": {
       "enabled": false,
       "fallbackToCacheTimeout": 0,
-      "checkAutomatically": "OFF"
+      "checkAutomatically": "NEVER"
     },
     "extra": {
       "router": {
         "origin": false
       },
       "eas": {
-        "projectId": "1e38da26-8d57-4dc3-87de-2e36b06445de"
+        "projectId": "2d416fd4-46bd-40d1-bfa5-d01fb7b33a4c"
       }
-    }
+    },
+    "owner": "lizziem"
   }
 }
